@@ -13,7 +13,7 @@ def send_to(IP , message):
 
     # Connect the socket to the port where the server is listening
 #    server_address = ('localhost', 10000)
-    print ( 'connecting to ', IP)
+    #print ( 'connecting to ', IP)
     sock.connect(IP)
 
     try:
@@ -30,8 +30,8 @@ def send_to(IP , message):
                 flag = 1
                 msg += data.decode("utf-8") 
             amount_received += len(data)
-            print ('received ', data)
+            #print ('received ', data)
 
     finally:
-        print ('closing socket')
+        #print ('closing socket')
         sock.close()
