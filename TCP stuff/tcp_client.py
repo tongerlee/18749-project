@@ -7,8 +7,8 @@ def send_to(IP , message):
 
     # Connect the socket to the port where the server is listening
 #    server_address = ('localhost', 10000)
-    print ( 'connecting to ', server_address)
-    sock.connect(server_address)
+    print ( 'connecting to ', IP)
+    sock.connect(IP)
 
     try:
         sock.sendall(message.encode())
