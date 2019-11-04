@@ -1,43 +1,30 @@
 import socket
 import sys
+import time
+from multiprocessing import Process
+import tcp_server
+import tcp_client 
+import _thread
+ip_address = ('localhost', 10000)
+heartbeat_message = "alive"
+gfd_ip_address =  ('localhost', 8092)
+dead_message = "Server is dead."
 
-msg = ''
-flag = 0
 
-def listen_thread(IP):
-# Create a TCP/IP socket
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    # Bind the socket to the port
-    #server_address = ('localhost', 10000)
-    print ('starting up on %s port %s' % server_address)
-    sock.bind(server_address)
+def heartbeat():
+	while True:
+		time.sleep(2)
+		try:
+			tcp_client.send_to(gfd_ip_address ,heartbeat_message)# wait 2 sec
+		except:
+			pass
+		if tcp_client.flag == 1 and tcp_client.msg == heartbeat_message: #get messsage 
+			print("Server is alive.")# send message to gfd
+			tcp_client.flag = 0
+		else:
+			print(dead_message)
+			#tcp_client.send_to(gfd_ip_address,dead_message)
 
-    # Listen for incoming connections
-    sock.listen(1)
-
-    while True:
-        # Wait for a connection
-        print ( 'waiting for a connection')
-        connection, client_address = sock.accept()
-        msg = ''
-        flag = 0
-        try:
-            print('connection from', client_address)
-
-            # Receive the data in small chunks and retransmit it
-            while True:
-                data = connection.recv(16)
-                print ('received "%s"' % data)
-                if data:
-                    flag = 1
-                    msg += data
-                    print ('sending data back to the client')
-                    #connection.sendall(data)
-                else:
-                    print('no more data from', client_address)
-                    break
-                
-        finally:
-            # Clean up the connection
-            connection.close()
+_thread.start_new_thread(heartbeat(),tuple("thread_1"))
+_thread.start_new_thread(tcp_server.listen_thread(ip_address,0),tuple("thread_2"))
