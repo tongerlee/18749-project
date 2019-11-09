@@ -1,5 +1,6 @@
 import socket
 import sys
+import time
 
 def start_server(sock):
     while True:
@@ -10,10 +11,11 @@ def start_server(sock):
             while True:
                 data = connection.recv(1024)
                 if data:
-                    if data == 'alive?':
+                    if data.decode("utf-8") == 'alive':
                         connection.sendall(data)
+                        print(data)
                     else:
-                        print('received "%s %s"' %ctime() % data)
+                        print('received' , time.ctime(), data)
                 else:
                     print('no more data from', client_address)
                     break
@@ -23,7 +25,7 @@ def start_server(sock):
 if __name__=="__main__":
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Bind the socket to the port
-    server_address = (socket.gethostbyname('Siyus-MBP-2.wv.cc.cmu.edu'), 10000)
+    server_address = ('localhost', 8080)
     print('starting up on ', server_address)
     sock.bind(server_address)
     sock.listen(5)
