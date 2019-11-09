@@ -17,22 +17,21 @@ def heartbeat():
 	while True:
 		time.sleep(2)
 		try:
-			tcp_client.send_to(server_ip_address ,heartbeat_message)# wait 2 sec
+			tcp_client.send_to(server_ip_address ,heartbeat_message,1)# wait 2 sec
 		except:
 			pass
 		if tcp_client.flag == 1 and tcp_client.msg == heartbeat_message: #get messsage 
 			print(alive_message)# send message to gfd
 			try:
-				tcp_client.send_to(gfd_ip_address,alive_message)
-				print('sent')
+				tcp_client.send_to(gfd_ip_address,alive_message,0)
 			except:
 				pass
 			tcp_client.flag = 0
 		else:
 			print(dead_message)
 			try:
-				tcp_client.send_to(gfd_ip_address,dead_message)
-				print('sent')
+				tcp_client.send_to(gfd_ip_address,dead_message,0)
+				print ('msg sent')
 			except:
 				pass
 
