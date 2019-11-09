@@ -10,7 +10,7 @@ heartbeat_message = "alive"
 server_ip_address =  ('localhost', 8080)
 alive_message = "Server is alive."
 dead_message = "Server is dead."
-gfd_ip_address =  ('localhost', 8092)
+gfd_ip_address =  ('128.237.198.254', 8000)
 
 
 def heartbeat():
@@ -23,7 +23,8 @@ def heartbeat():
 		if tcp_client.flag == 1 and tcp_client.msg == heartbeat_message: #get messsage 
 			print(alive_message)# send message to gfd
 			try:
-				tcp_client.send_to(gfd_ip_address,dead_message)
+				tcp_client.send_to(gfd_ip_address,alive_message)
+				print('sent')
 			except:
 				pass
 			tcp_client.flag = 0
@@ -31,6 +32,7 @@ def heartbeat():
 			print(dead_message)
 			try:
 				tcp_client.send_to(gfd_ip_address,dead_message)
+				print('sent')
 			except:
 				pass
 
