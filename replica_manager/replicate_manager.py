@@ -53,18 +53,18 @@ def recvfrom(connection, client_address):
 
             try:
                 current_timestamp = str(datetime.now())
-                data = json.loads(data = connection.recv(1024))
+                data = json.loads(connection.recv(1024))
                 for ip in data:
                     ip = tuple(ip,"8080")
                 membersIP = data
 
                 print(current_timestamp + "  Num of members: " + numMembers)
             except json.decoder.JSONDecodeError as e:
-                #data =  connection.recv(1024).decode("utf-8")
+                data =  connection.recv(1024).decode("utf-8")
                 message = json.dumps(membersIP)
                 numMembers = len(membersIP)
                 send(client_address, message)
-                data = message
+                #data = message
             if not data:
                 print('No more data', client_address)
                 break
