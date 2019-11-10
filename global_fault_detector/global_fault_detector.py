@@ -7,6 +7,7 @@ from datetime import datetime
 from threading import Thread
 
 numMembers = 0
+myhostname = "Jiatongs-MBP.wv.cc.cmu.edu"
 alive_message = "Server is alive."
 dead_message = "Server is dead."
 
@@ -39,11 +40,12 @@ def recvfromlfd(connection, client_address):
 
 
 def recv():
+    global myhostname
     # Receiving from LFDs at port 8000
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Bind the socket to the port
     # server_address = ('128.237.198.254', 8000)
-    server_address = (socket.gethostbyname("Jiatongs-MBP.wv.cc.cmu.edu"), 8000)
+    server_address = (socket.gethostbyname(myhostname), 8000)
     print('GFD starting up on %s port %s' % server_address)
     sock.bind(server_address)
     # Listen for LFD
@@ -56,17 +58,18 @@ def recv():
 
 def send():
     global numMembers
+    global myhostname
     # Send to RM
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Connect the socket to the port where the server is listening
-    server_address = (socket.gethostbyname("Jiatongs-MBP.wv.cc.cmu.edu"), 10000)
+    server_address = (socket.gethostbyname(myhostname), 10000)
     print('Connecting to %s port %s' % server_address)
     sock.connect(server_address)
     # Send data to RM
     while True:
-        time.sleep(10)
+        time.sleep(5)
         now = datetime.now()
         message = str(numMembers)
         # print('%s Sending message to RM "%s"' % (str(datetime.now()), message))
