@@ -48,13 +48,13 @@ def recvfrom(connection, client_address):
         # Receive the data in small chunks and retransmit it
 
         while True:
-            #data = connection.recv(1024).decode("utf-8")
+            data = connection.recv(1024)
            # print("RM received",data)
-
-            try:
-                current_timestamp = str(datetime.now())
-                data = connection.recv(1024)
-                if data != None:
+            if data != None:
+                try:
+                    current_timestamp = str(datetime.now())
+                    data = connection.recv(1024)
+              
                     data = json.loads(data)
                     data_tuple = []
                     for ip in data:
@@ -63,15 +63,15 @@ def recvfrom(connection, client_address):
                     membersIP = data_tuple
                     numMembers = len(membersIP)
 
-                print(current_timestamp , "  Num of members: " ,numMembers)
-            except json.decoder.JSONDecodeError as e:
-                data =  connection.recv(1024).decode("utf-8")
-                message = json.dumps(membersIP)
-                numMembers = len(membersIP)
-                try:
-                    send(client_address, message)
-                except:
-                    pass
+                    print(current_timestamp , "  Num of members: " ,numMembers)
+                except json.decoder.JSONDecodeError as e:
+                    data =  connection.recv(1024).decode("utf-8")
+                    message = json.dumps(membersIP)
+                    numMembers = len(membersIP)
+                    try:
+                        send(client_address, message)
+                    except:
+                        pass
                 #data = message
             if not data:
                 print('No more data', client_address)
