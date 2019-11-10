@@ -50,9 +50,7 @@ def recvfrom(connection, client_address):
         while True:
             #data = connection.recv(1024).decode("utf-8")
            # print("RM received",data)
-            if not data:
-                print('No more data', client_address)
-                break
+
             try:
                 current_timestamp = str(datetime.now())
                 data = json.loads(data = connection.recv(1024))
@@ -66,6 +64,10 @@ def recvfrom(connection, client_address):
                 message = json.dumps(membersIP)
                 numMembers = len(membersIP)
                 send(client_address, message)
+                            
+            if not data:
+                print('No more data', client_address)
+                break
 
 
     finally:
