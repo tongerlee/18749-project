@@ -64,7 +64,7 @@ def recvfrom(connection, client_address):
                 message = json.dumps(membersIP)
                 numMembers = len(membersIP)
                 send(client_address, message)
-                            
+                data = message
             if not data:
                 print('No more data', client_address)
                 break
