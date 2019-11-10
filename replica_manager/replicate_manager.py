@@ -53,7 +53,7 @@ def recvfrom(connection, client_address):
             if data != None:
                 try:
                     current_timestamp = str(datetime.now())
-                    data = connection.recv(1024)
+                    #data = connection.recv(1024)
               
                     data = json.loads(data)
                     data_tuple = []
@@ -65,7 +65,7 @@ def recvfrom(connection, client_address):
 
                     print(current_timestamp , "  Num of members: " ,numMembers)
                 except json.decoder.JSONDecodeError as e:
-                    data =  connection.recv(1024).decode("utf-8")
+                    #data =  connection.recv(1024).decode("utf-8")
                     message = json.dumps(membersIP)
                     numMembers = len(membersIP)
                     try:
