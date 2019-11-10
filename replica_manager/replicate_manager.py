@@ -54,9 +54,11 @@ def recvfrom(connection, client_address):
             try:
                 current_timestamp = str(datetime.now())
                 data = json.loads(connection.recv(1024))
+                data_tuple = []
                 for ip in data:
-                    ip = tuple(ip,"8080")
-                membersIP = data
+                    ip = (ip,8080)
+                    data_tuple.append(ip)
+                membersIP = data_tuple
 
                 print(current_timestamp , "  Num of members: " ,numMembers)
             except json.decoder.JSONDecodeError as e:
