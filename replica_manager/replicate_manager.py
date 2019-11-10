@@ -53,9 +53,9 @@ def recvfrom(connection, client_address):
 
             try:
                 current_timestamp = str(datetime.now())
-                print(connection.recv(1024))
+                data = connection.recv(1024)
 
-                data = json.loads(connection.recv(1024))
+                data = json.loads(data)
                 data_tuple = []
                 for ip in data:
                     ip = (ip,8080)
