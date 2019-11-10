@@ -28,9 +28,6 @@ def recvfromlfd(connection, client_address):
                 if data == dead_message:
                     numMembers = 0
             if not data:
-            #     print('Sending data back to the client')
-            #     connection.sendall(data)
-            # else:
                 print('No more data from LFD', client_address)
                 break
 

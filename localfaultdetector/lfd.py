@@ -12,7 +12,6 @@ alive_message = "Server is alive."
 dead_message = "Server is dead."
 gfd_ip_address =  ('128.237.198.254', 8000)
 
-
 def heartbeat():
 	while True:
 		time.sleep(2)
