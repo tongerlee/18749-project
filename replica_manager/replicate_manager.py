@@ -53,12 +53,15 @@ def recvfrom(connection, client_address):
 
             try:
                 current_timestamp = str(datetime.now())
+                print(connection.recv(1024))
+
                 data = json.loads(connection.recv(1024))
                 data_tuple = []
                 for ip in data:
                     ip = (ip,8080)
                     data_tuple.append(ip)
                 membersIP = data_tuple
+                numMembers = len(membersIP)
 
                 print(current_timestamp , "  Num of members: " ,numMembers)
             except json.decoder.JSONDecodeError as e:
@@ -99,6 +102,7 @@ def send(server_address, message):
 
     #server_address = (socket.gethostbyname(myhostname), 10000)
     print('Connecting to %s port %s' % server_address)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(server_address)
     # Send data to RM
 
