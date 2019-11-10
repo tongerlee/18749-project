@@ -3,10 +3,12 @@ import sys
 import time
 from datetime import datetime
 
+import json
+import tcp_client
 # Create a TCP/IP socket
 from threading import Thread
 
-numMembers = 0
+iplist=[]
 myhostname = "Jiatongs-MBP.wv.cc.cmu.edu"
 alive_message = "Server is alive."
 dead_message = "Server is dead."
@@ -16,17 +18,30 @@ def recvfromlfd(connection, client_address):
     global numMembers
     try:
         print('Connection from', client_address)
+        client_ip = client_address[0]
 
         # Receive the data in small chunks and retransmit it
         while True:
             data = connection.recv(1024).decode("utf-8")
+            send_to_rm_flag = False
             print('GFD received "%s" from LFD' % data)
-            if numMembers == 0:
-                if data == alive_message:
-                    numMembers = 1
-            if numMembers > 0:
-                if data == dead_message:
-                    numMembers = 0
+            if alive_message in data:
+                if client_ip not in iplist:
+                    iplist.append(client_ip)
+                    send_to_rm_flag = True
+                    print('Added')
+            if dead_message in data:
+                if client_ip in iplist:
+                    iplist.remove(client_ip)
+                    send_to_rm_flag = True
+                    print('Removed')
+            
+            if send_to_rm_flag:
+                try:
+                    tcp_client.send_to(('localhost', 10000), json.dumps(iplist),0)
+                    send_to_rm_flag=False
+                except:
+                    pass
             if not data:
                 print('No more data from LFD', client_address)
                 break
@@ -42,7 +57,7 @@ def recv():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Bind the socket to the port
     # server_address = ('128.237.198.254', 8000)
-    server_address = (socket.gethostbyname(myhostname), 8000)
+    server_address = ('localhost', 8000)
     print('GFD starting up on %s port %s' % server_address)
     sock.bind(server_address)
     # Listen for LFD
@@ -74,6 +89,6 @@ def send():
 
 
 Thread(target=recv).start()
-Thread(target=send).start()
+#Thread(target=send).start()
 
 
