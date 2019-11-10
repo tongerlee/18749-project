@@ -19,7 +19,7 @@ try:
         time.sleep(10)
         # now = datetime.now()
         # message = str(now) + "This is the message.  It will be repeated." + str(iteration)
-        message = '1'
+        message = 'request'
         print(sys.stderr, 'sending "%s"' % message)
         sock.sendall(str.encode(message))
         iteration += 1
