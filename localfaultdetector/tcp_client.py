@@ -3,7 +3,7 @@ import sys
 import time
 
 
-def send_to(IP , message):
+def send_to(IP , message, wait):
     global msg
     global flag
     msg = ''
@@ -22,7 +22,8 @@ def send_to(IP , message):
         amount_received = 0
         amount_expected = len(message) 
         count = 0
-        while amount_received < amount_expected and count<2:
+        while amount_received < amount_expected and count<2 and wait ==1:
+            print (count)
             count+=1
             time.sleep(1)
             data = sock.recv(16)
