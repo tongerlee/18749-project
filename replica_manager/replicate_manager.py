@@ -58,7 +58,7 @@ def recvfrom(connection, client_address):
                     ip = tuple(ip,"8080")
                 membersIP = data
 
-                print(current_timestamp + "  Num of members: " + numMembers)
+                print(current_timestamp , "  Num of members: " ,numMembers)
             except json.decoder.JSONDecodeError as e:
                 data =  connection.recv(1024).decode("utf-8")
                 message = json.dumps(membersIP)
