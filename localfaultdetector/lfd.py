@@ -5,13 +5,12 @@ from multiprocessing import Process
 import tcp_server
 import tcp_client 
 import _thread
-my_ip_address = ('localhost', 10000)
+my_ip_address = ('localhost', 8888)
 heartbeat_message = "alive"
 server_ip_address =  ('localhost', 8080)
 alive_message = "Server is alive."
 dead_message = "Server is dead."
 gfd_ip_address =  ('128.237.198.254', 8000)
-
 
 def heartbeat():
 	while True:
