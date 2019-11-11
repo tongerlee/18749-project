@@ -29,7 +29,8 @@ def recvfrom(connection, client_address):
               
                     data = json.loads(data)
                     data_tuple = []
-                    for ip in data:
+                    for ip in data_tuple:
+                        print(ip)
                         ip = (ip,8080)
                         data_tuple.append(ip)
                     membersIP = data_tuple
