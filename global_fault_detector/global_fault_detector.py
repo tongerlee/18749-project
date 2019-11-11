@@ -89,6 +89,6 @@ def send():
 
 
 Thread(target=recv).start()
-#Thread(target=send).start()
+Thread(target=send).start()
 
 
