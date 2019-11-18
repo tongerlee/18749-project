@@ -17,7 +17,7 @@ def heartbeat():
 			tcp_client.send_to(server_ip_address ,heartbeat_message,1)# wait 2 sec
 		except:
 			tcp_client.flag = 0# assume failed
-		#print (tcp_client.flag, tcp_client.msg)
+		print (tcp_client.flag, tcp_client.msg)
 		if tcp_client.flag == 1 and tcp_client.msg == heartbeat_message: #get messsage 
 			print(alive_message)# send message to gfd
 			try:

@@ -34,15 +34,7 @@ def recvfrom(connection, client_address):
                         ip = (ip,8080)
                         data_tuple.append(ip)
                     membersIP = data_tuple
-                    numMembers2 = len(membersIP)
-                    if numMembers2 != numMembers:
-                        numMembers = numMembers2
-                        message = json.dumps(membersIP)
-                        numMembers = len(membersIP)
-                        try:
-                            send(client_address, message)
-                        except:
-                            pass
+                    numMembers = len(membersIP)
 
                     print(current_timestamp , "  Num of members: " ,numMembers)
                 except json.decoder.JSONDecodeError as e:
