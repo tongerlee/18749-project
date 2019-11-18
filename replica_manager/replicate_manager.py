@@ -40,7 +40,7 @@ def recvfrom(connection, client_address):
                         message = json.dumps(membersIP)
                         numMembers = len(membersIP)
                         try:
-                            send(client_address, message)
+                            connection.sendall(str.encode(message))
                         except:
                             pass
 
@@ -50,7 +50,8 @@ def recvfrom(connection, client_address):
                     message = json.dumps(membersIP)
                     numMembers = len(membersIP)
                     try:
-                        send(client_address, message)
+                        #send(client_address, message)
+                        connection.sendall(str.encode(message))
                     except:
                         pass
                 #data = message
