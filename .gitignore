@@ -1,0 +1,13 @@
+# IntelliJ project files
+
+.idea
+*.iml
+out
+gen
+### macOS template
+# General
+.DS_Store
+**/.DS_Store
+
+__pycache__/
+**/__pycache__/
