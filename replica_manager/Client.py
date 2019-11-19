@@ -23,6 +23,9 @@ try:
         print(sys.stderr, 'sending "%s"' % message)
         sock.sendall(str.encode(message))
         iteration += 1
+        data = sock.recv(16)
+        #amount_received += len(data)
+        print(sys.stderr, 'received "%s"' % data)
 
     # Look for the response
     amount_received = 0
