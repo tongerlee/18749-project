@@ -33,7 +33,7 @@ def recvfromlfd(connection, client_address):
             if dead_message in data:
                 if client_ip in iplist:
                     iplist.remove(client_ip)
-                    # send_to_rm_flag = True
+                    send_to_rm_flag = True
                     print('Removed')
 
             # if send_to_rm_flag:
