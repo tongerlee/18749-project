@@ -9,13 +9,15 @@ import json
 
 myhostname = "localhost"
 numMembers = 0
-membersIP = []
+membersIP = ['128.237.115.255', '128.237.176.112']
+
 
 def recvfrom(connection, client_address):
     global numMembers
     global membersIP
     try:
-        print('Connection from', client_address)
+        print('Connection from'
+              , client_address)
 
         # Receive the data in small chunks and retransmit it
 
@@ -31,7 +33,7 @@ def recvfrom(connection, client_address):
                     data_tuple = []
                     for ip in data_tuple:
                         print(ip)
-                        ip = (ip,8080)
+                        ip = (ip, 8080)
                         data_tuple.append(ip)
                     membersIP = data_tuple
                     numMembers = len(membersIP)
@@ -42,7 +44,13 @@ def recvfrom(connection, client_address):
                     message = json.dumps(membersIP)
                     numMembers = len(membersIP)
                     try:
-                        send(client_address, message)
+                        # send(client_address, message)
+                        connection.sendall(str.encode(message))
+                        time.sleep(2)
+
+                        membersIP = ['128.237.176.112']
+                        message = json.dumps(membersIP)
+                        connection.sendall(str.encode(message))
                     except:
                         pass
                 #data = message

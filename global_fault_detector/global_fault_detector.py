@@ -39,6 +39,7 @@ def recvfromlfd(connection, client_address):
             if send_to_rm_flag:
                 try:
                     tcp_client.send_to(('localhost', 10000), json.dumps(iplist),0)
+                    send_to_rm_flag=False
                 except:
                     pass
             if not data:
@@ -88,6 +89,6 @@ def send():
 
 
 Thread(target=recv).start()
-#Thread(target=send).start()
+Thread(target=send).start()
 
 
