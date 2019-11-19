@@ -33,7 +33,7 @@ def recvfrom(connection, client_address):
                     data_tuple = []
                     for ip in data_tuple:
                         print(ip)
-                        ip = (ip,8080)
+                        ip = (ip, 8080)
                         data_tuple.append(ip)
                     membersIP = data_tuple
                     numMembers = len(membersIP)
@@ -47,6 +47,7 @@ def recvfrom(connection, client_address):
                         # send(client_address, message)
                         connection.sendall(str.encode(message))
                         time.sleep(2)
+
                         membersIP = ['128.237.176.112']
                         message = json.dumps(membersIP)
                         connection.sendall(str.encode(message))
