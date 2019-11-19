@@ -20,7 +20,7 @@ def work():
     iteration = 0
     while True:
 
-        time.sleep(20)
+        time.sleep(2)
 
         # format of message to server : (client_id, inputData)
         inputData = client_id + "," + str(iteration) + ",1"
