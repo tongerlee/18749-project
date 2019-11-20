@@ -4,8 +4,8 @@ import sys
 import time
 from threading import Thread
 
-client_id = sys.argv[2]
-rm_IP = sys.argv[1]
+client_id = sys.argv[1]
+rm_IP = 'localhost'
 rm_port = 10001
 server_port = 8080
 
