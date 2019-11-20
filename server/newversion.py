@@ -23,6 +23,7 @@ class Server():
         self.time2 = -1
         self.socket1 = None
         self.socket2 = None
+        self.current_num_of_servers = 0
 
     def handle_client(self, host, port):
         print("start client thread")
@@ -95,6 +96,9 @@ class Server():
                 print("receive data from rm", data)
                 new_servers = json.loads(data)['ip_list']
                 num_of_servers = json.loads(data)['num_member']
+                if self.current_num_of_servers != num_of_servers:
+                    print ('Membership change, current numbers: ' + str(num_of_servers))
+                self.current_num_of_servers = num_of_servers
                 if int(num_of_servers) == 1:
                     self.isReady = True
                     continue
@@ -103,7 +107,7 @@ class Server():
                     
                 for new_server in new_servers:
                     new_ip = new_server[0]
-                    if new_ip == '128.237.118.203':
+                    if new_ip == '128.237.143.45':
                         continue
                     # prepare checkpoint
                     checkpoint = self.prepare_checkpoint()
@@ -160,10 +164,15 @@ class Server():
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Connect the socket to the port where the new replica is listening
         print('Connecting to new replica at %s port %s' % (new_ip, port))
-        sock.connect((new_ip, port))
-        time.sleep(5)
-        print("before send", str.encode(state))
-        sock.sendall(str.encode(state))
+        try:
+            sock.connect((new_ip, port))
+            time.sleep(5)
+            print("before send", str.encode(state))
+            sock.sendall(str.encode(state))
+        except socket.error as e:
+            print ("error is %d" % e)
+            pass
+
         print('State sent to new replica at %s port %s' % (new_ip, port))
         sock.close()
 
@@ -191,7 +200,7 @@ class Server():
                             self.socket1.sendall(str.encode(str(self.mc1)))
                             self.socket1.close()
                         else:
-                            self.socket1.sendall(str.encode("not ready"))
+                            self.socket1.sendall(str.encode(str(self.mc1)))
                             self.socket1.close()
                     else:
                         if data[1] > self.time2:
@@ -201,7 +210,7 @@ class Server():
                             self.socket2.sendall(str.encode(str(self.mc2)))
                             self.socket2.close()
                         else:
-                            self.socket2.sendall(str.encode("not ready"))
+                            self.socket2.sendall(str.encode(str(self.mc2)))
                             self.socket2.close()
 
             else:
@@ -209,8 +218,8 @@ class Server():
 
 if __name__ == "__main__":
     server = Server()
-    threading.Thread(target = server.handle_client, args = ('Siyus-MBP-2.wv.cc.cmu.edu', 8080)).start()
+    threading.Thread(target = server.handle_client, args = ('RusselldeMBP.wv.cc.cmu.edu', 8080)).start()
     threading.Thread(target = server.handle_lfd, args = ('localhost', 8082)).start()
-    threading.Thread(target = server.handle_rec_checkpoint, args = ('Siyus-MBP-2.wv.cc.cmu.edu', 8086)).start()
-    threading.Thread(target = server.handle_rm, args = ('Siyus-MBP-2.wv.cc.cmu.edu', 8084)).start()
+    threading.Thread(target = server.handle_rec_checkpoint, args = ('RusselldeMBP.wv.cc.cmu.edu', 8086)).start()
+    threading.Thread(target = server.handle_rm, args = ('RusselldeMBP.wv.cc.cmu.edu', 8084)).start()
     threading.Thread(target = server.process_client_request).start()
