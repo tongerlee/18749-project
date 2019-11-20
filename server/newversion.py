@@ -107,7 +107,7 @@ class Server():
                     
                 for new_server in new_servers:
                     new_ip = new_server[0]
-                    if new_ip == '128.237.143.45':
+                    if new_ip == '128.237.202.5':
                         continue
                     # prepare checkpoint
                     checkpoint = self.prepare_checkpoint()
@@ -139,25 +139,25 @@ class Server():
             self.isReady = False
 
             # Receive the data in small chunks and retransmit it
-            while True:
-                raw_data = connection.recv(4096)  # ???
-                current_timestamp = str(datetime.now())
-                data = json.loads(raw_data.decode("utf-8"))
-                self.mc1 = int(data["mc_1"])
-                self.mc2 = int(data["mc_2"])
-                self.time1 = int(data["time1"])
-                self.time2 = int(data["time2"])
-                # for each in data['queue']:
-                #     self.q.put(each)
-                self.isReady = True
-                print("Checkpoint mc1= ", self.mc1, "mc2= ", self.mc2, "queue= ", self.q)
-                print("Checkpoint received. I am ready")
-                if not data:
-                    print (current_timestamp, "No receive data from Server")
-                    break
-                else:
-                    break
+            raw_data = connection.recv(4096)  # ???
+            current_timestamp = str(datetime.now())
+            data = json.loads(raw_data.decode("utf-8"))
+            self.mc1 = int(data["mc_1"])
+            self.mc2 = int(data["mc_2"])
+            self.time1 = int(data["time1"])
+            self.time2 = int(data["time2"])
+            # for each in data['queue']:
+            #     self.q.put(each)
+            self.isReady = True
+            print("Checkpoint mc1= ", self.mc1, "mc2= ", self.mc2, "queue= ", self.q)
+            print("Checkpoint received. I am ready")
+            if not data:
+                print (current_timestamp, "No receive data from Server")
+                break
+            else:
+                break
                 # print(current_timestamp, self.parse_data(data))
+        sock.close()
 
     def send_to_new_replica(self, state, new_ip, port):
         # Create a TCP/IP socket
