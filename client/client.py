@@ -7,7 +7,7 @@ from threading import Thread
 client_id = '1'
 rm_IP = '128.237.214.135'
 rm_port = 10001
-server_port = 8081
+server_port = 8080
 
 server_list = []
 
