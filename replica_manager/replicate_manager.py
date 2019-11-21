@@ -21,31 +21,24 @@ def recvfromClient(connection, client_address, sock):
         # Receive the data in small chunks and retransmit it
         connection.sendall(str.encode(json.dumps(membersIP)))
         while True:
-            # print("RM received",data)
-            # if data != None:
             try:
                 current_timestamp = str(datetime.now())
                 # sending new ip tuple list to all servers
                 if len(membersIP) != numServer:
-                    print("Broadcasting new ip lists to all clients")
+                    print("Broadcasting new list of ips to all clients")
                     connection.sendall(str.encode(json.dumps(membersIP)))
                     numServer = len(membersIP)
-
-                    print(current_timestamp, "New Server sent to clients")
             except json.decoder.JSONDecodeError as e:
-                # data =  connection.recv(1024).decode("utf-8")
                 message = json.dumps(membersIP)
                 numMembers = len(membersIP)
                 try:
-                    print("error here")
+                    print("error here ", e)
                 except:
                     pass
                 # data = message
             # if not data:
                 # print('No more data', client_address)
                 # break
-
-
     finally:
         # Clean up the connection
         connection.close()
@@ -71,14 +64,9 @@ def recvfrom(connection, client_address):
                     for ip in ip_list:
                         ip = (ip, 8084)
                         ip_tuple.append(ip)
-                    if len(membersIP) > len(ip_tuple):
-                        print("Missing member? ", len(membersIP) > len(ip_tuple))
-                    # if we have a new member and it is not the only member
-                    print("Do we have new member? ", len(membersIP) < len(ip_tuple))
-                    if len(membersIP) < len(ip_tuple):
-                        print("Is is the only member? ", len(ip_tuple) > 1)
-                    if len(membersIP) < len(ip_tuple):
-                        print("Broadcasting new ip lists to all servers")
+                    if len(membersIP) != len(ip_tuple):
+                        print("Membership changed")
+                        print("Broadcasting membership change to all servers")
                         # sending new ip tuple list to all servers
                         new_server = list(set(ip_tuple) - set(membersIP))
                         for server_address in ip_tuple:
@@ -87,7 +75,9 @@ def recvfrom(connection, client_address):
                     membersIP = ip_tuple
                     numMembers = len(membersIP)
 
-                    print(current_timestamp, "  Num of members: ", numMembers, " ip: ", ip_tuple)
+                    print(current_timestamp,
+                          "\n  Num of members: ", numMembers,
+                          "\n ip: ", ip_tuple)
                 except json.decoder.JSONDecodeError as e:
                     # data =  connection.recv(1024).decode("utf-8")
                     message = json.dumps(membersIP)
@@ -132,7 +122,6 @@ def recvClient():
     server_address = (socket.gethostbyname(myhostname), 10001)
     print('RM starting up on %s port %s' % server_address)
     sock.bind(server_address)
-
     sock.listen(3)
     while True:
         print('Waiting for new connection')
