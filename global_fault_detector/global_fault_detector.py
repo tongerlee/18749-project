@@ -23,25 +23,15 @@ def recvfromlfd(connection, client_address):
         # Receive the data in small chunks and retransmit it
         while True:
             data = connection.recv(1024).decode("utf-8")
-            # send_to_rm_flag = False
             print('GFD received "%s" from LFD' % data)
             if alive_message in data:
                 if client_ip not in iplist:
                     iplist.append(client_ip)
-                    # send_to_rm_flag = True
-                    print('Added')
+                    print('New server ip added, membership changed')
             if dead_message in data:
                 if client_ip in iplist:
                     iplist.remove(client_ip)
-                    send_to_rm_flag = True
-                    print('Removed')
-
-            # if send_to_rm_flag:
-            #     try:
-            #         tcp_client.send_to(('localhost', 10000), json.dumps(iplist), 0)
-            #         send_to_rm_flag = False
-            #     except:
-            #         pass
+                    print('Server ip removed, membership changed')
             if not data:
                 print('No more data from LFD', client_address)
                 break
@@ -63,7 +53,7 @@ def recv():
     # Listen for LFD
     sock.listen(3)
     while True:
-        print('Waiting for new connection')
+        print('Waiting for new connection from lfd')
         c, addr = sock.accept()  # Establish connection with client.
         Thread(target=recvfromlfd, args=(c, addr)).start()
 
@@ -78,12 +68,12 @@ def send():
     # Connect the socket to the port where the server is listening
     server_address = (socket.gethostbyname(myhostname), 10000)
     # server_address = ('localhost', 10000)
-    print('Connecting to %s port %s' % server_address)
+    print('Connecting to RM %s port %s' % server_address)
     sock.connect(server_address)
     # Send data to RM
     while True:
         time.sleep(5)
-        print("current ip list: %s" % iplist)
+        print("current list of ips: %s" % iplist)
         message = json.dumps({'ip_list': iplist})
         # now = datetime.now()
         # print('%s Sending message to RM "%s"' % (str(datetime.now()), message))
