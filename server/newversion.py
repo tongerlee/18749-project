@@ -6,9 +6,10 @@ import sys
 from datetime import datetime
 from queue import Queue
 from collections import deque
-
+import os
 
 class Server():
+    IP = ''
     def __init__(self):
         # initialize variable
         # listen for checkpoint request
@@ -98,6 +99,22 @@ class Server():
             finally:
                 client.close()
 
+    def timer_to_checkpoint(self):
+        while self.thread_running:
+            time.sleep(10)
+            if self.isPrimary:
+                self.isReady = False
+                checkpoint = self.prepare_checkpoint()
+                for new_server in new_servers:
+                    new_ip = new_server[0]
+                    if new_ip == self.IP:
+                        continue
+                    print("checkpoint is ", checkpoint)
+                    self.send_to_new_replica(checkpoint, new_ip, 8086)
+                self.lockReady.acquire()
+                self.isReady = True
+                self.lockReady.release()
+
     def handle_rm(self, host, port):
         print("start replication manager thread")
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -115,9 +132,12 @@ class Server():
                 # parse received data
                 print("receive data from rm", data)
                 new_servers = json.loads(data)['ip_list']
+                print("new_servers: ",new_servers)
                 num_of_servers = json.loads(data)['num_member']
                 if new_servers[0][0] == self.IP:
                     self.isPrimary = True
+                else:
+                    self.isPrimary = False
                 if self.current_num_of_servers != num_of_servers:
                     print('Membership change, current numbers: ' + str(num_of_servers))
                 if self.current_num_of_servers < num_of_servers:
@@ -126,15 +146,11 @@ class Server():
                         continue
                     else:
                         self.isReady = False
-
+                if self.isPrimary:
                     for new_server in new_servers:
                         new_ip = new_server[0]
                         if new_ip == self.IP:
                             continue
-                        # prepare checkpoint
-                        while not self.checkpointReady:
-                            continue
-                        # if self.isPrimary:
                         checkpoint = self.prepare_checkpoint()
                         print("checkpoint is ", checkpoint)
                         self.send_to_new_replica(checkpoint, new_ip, 8086)
@@ -145,6 +161,8 @@ class Server():
 
             finally:
                 client.close()
+
+
 
     def handle_rec_checkpoint(self, host, port):
         # send ip, port to RM
@@ -285,14 +303,17 @@ class Server():
 
 
 if __name__ == "__main__":
-    server = Server()
+    myip = os.environ.get('MYIP')
+    myhostname = os.environ.get('MYHOSTNAME')
+    server = Server(IP=myip)
     threads = []
     try:
-        threads.append(threading.Thread(target=server.handle_client, args=('Jiatongs-MBP.wv.cc.cmu.edu', 8080)))
+        threads.append(threading.Thread(target=server.handle_client, args=(myhostname, 8080)))
         threads.append(threading.Thread(target=server.handle_lfd, args=('localhost', 8082)))
-        threads.append(threading.Thread(target=server.handle_rec_checkpoint, args=('Jiatongs-MBP.wv.cc.cmu.edu', 8086)))
-        threads.append(threading.Thread(target=server.handle_rm, args=('Jiatongs-MBP.wv.cc.cmu.edu', 8084)))
+        threads.append(threading.Thread(target=server.handle_rec_checkpoint, args=(myhostname, 8086)))
+        threads.append(threading.Thread(target=server.handle_rm, args=(myhostname, 8084)))
         threads.append(threading.Thread(target=server.process_client_request))
+        threads.append(threading.Thread(target=server.timer_to_checkpoint))
         for eachThread in threads:
             eachThread.start()
         while server.thread_running:
