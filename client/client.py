@@ -6,7 +6,7 @@ from threading import Thread
 import os
 
 client_id = sys.argv[1]
-rm_IP = os.environ.get('RMIP')
+rm_IP = os.environ.get('GFDIP')
 rm_port = 10001
 server_port = 8080
 
