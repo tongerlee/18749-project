@@ -28,6 +28,7 @@ class Server():
         self.checkpointReady = True
         self.thread_running = True
 
+
     def handle_client(self, host, port):
         print("start client thread")
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -114,6 +115,7 @@ class Server():
                 # parse received data
                 print("receive data from rm", data)
                 new_servers = json.loads(data)['ip_list']
+                print("new_servers: ",new_servers)
                 num_of_servers = json.loads(data)['num_member']
                 if self.current_num_of_servers != num_of_servers:
                     print('Membership change, current numbers: ' + str(num_of_servers))
@@ -126,7 +128,7 @@ class Server():
 
                     for new_server in new_servers:
                         new_ip = new_server[0]
-                        if new_ip == '128.237.211.163':
+                        if new_ip == '128.237.197.253':
                             continue
                         # prepare checkpoint
                         while not self.checkpointReady:
@@ -284,10 +286,10 @@ if __name__ == "__main__":
     server = Server()
     threads = []
     try:
-        threads.append(threading.Thread(target=server.handle_client, args=('Jiatongs-MBP.wv.cc.cmu.edu', 8080)))
+        threads.append(threading.Thread(target=server.handle_client, args=('pp.wifi.local.cmu.edu', 8080)))
         threads.append(threading.Thread(target=server.handle_lfd, args=('localhost', 8082)))
-        threads.append(threading.Thread(target=server.handle_rec_checkpoint, args=('Jiatongs-MBP.wv.cc.cmu.edu', 8086)))
-        threads.append(threading.Thread(target=server.handle_rm, args=('Jiatongs-MBP.wv.cc.cmu.edu', 8084)))
+        threads.append(threading.Thread(target=server.handle_rec_checkpoint, args=('pp.wifi.local.cmu.edu', 8086)))
+        threads.append(threading.Thread(target=server.handle_rm, args=('pp.wifi.local.cmu.edu', 8084)))
         threads.append(threading.Thread(target=server.process_client_request))
         for eachThread in threads:
             eachThread.start()
