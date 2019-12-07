@@ -27,6 +27,7 @@ class Server():
         self.current_num_of_servers = 0
         self.checkpointReady = True
         self.thread_running = True
+        self.isPrimary = False
 
     def handle_client(self, host, port):
         print("start client thread")
@@ -115,6 +116,8 @@ class Server():
                 print("receive data from rm", data)
                 new_servers = json.loads(data)['ip_list']
                 num_of_servers = json.loads(data)['num_member']
+                if new_servers[0][0] == self.IP:
+                    self.isPrimary = True
                 if self.current_num_of_servers != num_of_servers:
                     print('Membership change, current numbers: ' + str(num_of_servers))
                 if self.current_num_of_servers < num_of_servers:
@@ -126,11 +129,12 @@ class Server():
 
                     for new_server in new_servers:
                         new_ip = new_server[0]
-                        if new_ip == '128.237.211.163':
+                        if new_ip == self.IP:
                             continue
                         # prepare checkpoint
                         while not self.checkpointReady:
                             continue
+                        # if self.isPrimary:
                         checkpoint = self.prepare_checkpoint()
                         print("checkpoint is ", checkpoint)
                         self.send_to_new_replica(checkpoint, new_ip, 8086)
