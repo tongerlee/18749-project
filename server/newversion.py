@@ -279,22 +279,38 @@ class Server():
                 self.lockReady.acquire()
                 if self.isReady and self.isPrimary:
                     self.lockReady.release()
+                    print(1111111)
                     if not self.q.empty():
+                        print(222222)
                         data = self.q.get()
                         if data[0] == 1:
+                            print(333333)
                             if data[1] > self.time1:
+                                print(444444)
                                 self.time1 = data[1]
                                 self.mc1 += data[2]
                                 print("receive from client1, now seq num", self.mc1, self.time1)
                                 if self.socket1 is not None:
+                                    print(555555)
+                                    print(self.mc1)
+                                    print(str.encode(str(self.mc1)))
                                     self.socket1.sendall(str.encode(str(self.mc1)))
+                                    print("-------------")
                                     self.socket1.close()
+                                    print("!!!!!!!!!!!!")
                             else:
+                                print(666666)
                                 if self.socket1 is not None:
+                                    print(self.mc1)
+                                    print(str.encode(str(self.mc1)))
                                     self.socket1.sendall(str.encode(str(self.mc1)))
+                                    print(">>>>>>>>>")
                                     self.socket1.close()
+                                    print("++++++++++")
                         else:
+                            print(7777777)
                             if data[1] > self.time2:
+                                print(8888888)
                                 self.time2 = data[1]
                                 self.mc2 += data[2]
                                 print("receive from client2, now seq num", self.mc2, self.time2)
@@ -302,6 +318,7 @@ class Server():
                                     self.socket2.sendall(str.encode(str(self.mc2)))
                                     self.socket2.close()
                             else:
+                                print(999999)
                                 if self.socket2 is not None:
                                     self.socket2.sendall(str.encode(str(self.mc2)))
                                     self.socket2.close()
