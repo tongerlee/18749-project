@@ -316,8 +316,10 @@ class Server():
 
 
 if __name__ == "__main__":
-    myip = os.environ.get('MYIP')
-    myhostname = os.environ.get('MYHOSTNAME')
+    # myip = os.environ.get('MYIP')
+    # myhostname = os.environ.get('MYHOSTNAME')
+    myhostname = socket.gethostname()
+    myip = socket.gethostbyname(myhostname)
     server = Server()
     server.set_ip(myip)
     threads = []
