@@ -9,7 +9,6 @@ from collections import deque
 import os
 
 class Server():
-    IP = ''
     def __init__(self):
         # initialize variable
         # listen for checkpoint request
@@ -30,7 +29,9 @@ class Server():
         self.thread_running = True
         self.isPrimary = False
         self.ip_list = []
-
+        self.IP = ''
+    def set_ip(self,ip):
+        self.IP = ip
     def handle_client(self, host, port):
         print("start client thread")
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -317,8 +318,10 @@ class Server():
 if __name__ == "__main__":
     myip = os.environ.get('MYIP')
     myhostname = os.environ.get('MYHOSTNAME')
-    server = Server(IP=myip)
+    server = Server()
+    server.set_ip(myip)
     threads = []
+    print(myip, server.IP, myhostname)
     try:
         threads.append(threading.Thread(target=server.handle_client, args=(myhostname, 8080)))
         threads.append(threading.Thread(target=server.handle_lfd, args=('localhost', 8082)))
