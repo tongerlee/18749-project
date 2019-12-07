@@ -163,8 +163,6 @@ class Server():
             finally:
                 client.close()
 
-
-
     def handle_rec_checkpoint(self, host, port):
         # send ip, port to RM
         """
@@ -196,6 +194,19 @@ class Server():
             self.mc2 = int(data["mc_2"])
             self.time1 = int(data["time1"])
             self.time2 = int(data["time2"])
+
+            queue_list = list(self.q.queue)
+            for request in queue_list:
+                client_id, time, cnt = request
+                if client_id == 1 and time < self.time1:
+                    queue_list.remove(request)
+                elif client_id == 2 and time < self.time2:
+                    queue_list.remove(request)
+                else:
+                    break
+            self.q = Queue()
+            for request in queue_list:
+                self.q.put(request)
 
             received_q = data['queue']
             print("received_q is ==========================", received_q)
@@ -260,7 +271,7 @@ class Server():
             while self.thread_running:
                 # When the server is not busy sending checkpoint and the queue has messages
                 self.lockReady.acquire()
-                if self.isReady:
+                if self.isReady and self.isPrimary:
                     self.lockReady.release()
                     if not self.q.empty():
                         data = self.q.get()
