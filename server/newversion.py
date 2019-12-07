@@ -106,7 +106,7 @@ class Server():
             if self.isPrimary:
                 self.isReady = False
                 checkpoint = self.prepare_checkpoint()
-                for new_server in new_servers:
+                for new_server in self.ip_list:
                     new_ip = new_server[0]
                     if new_ip == self.IP:
                         continue
