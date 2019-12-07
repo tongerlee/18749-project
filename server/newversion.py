@@ -209,20 +209,20 @@ class Server():
             for request in queue_list:
                 self.q.put(request)
 
-            received_q = data['queue']
-            print("received_q is ==========================", received_q)
-            if not queue_received and len(received_q) > 0:
-                print("Add the queue content")
-                queue_received = True
-                for item in received_q:
-                    client_id = item[0]
-                    curr_time = item[1]
-                    if client_id == 1:
-                        if time_1 is None or time_1 > curr_time:
-                            self.mc1 += 1
-                    if client_id == 2:
-                        if time_2 is None or time_2 > curr_time:
-                            self.mc2 += 1
+            # received_q = data['queue']
+            # print("received_q is ==========================", received_q)
+            # if not queue_received and len(received_q) > 0:
+            #     print("Add the queue content")
+            #     queue_received = True
+            #     for item in received_q:
+            #         client_id = item[0]
+            #         curr_time = item[1]
+            #         if client_id == 1:
+            #             if time_1 is None or time_1 > curr_time:
+            #                 self.mc1 += 1
+            #         if client_id == 2:
+            #             if time_2 is None or time_2 > curr_time:
+            #                 self.mc2 += 1
 
             self.isReady = True
             print("After this checkpoint mc1= ", self.mc1, "mc2= ", self.mc2, "queue= ", self.q)
