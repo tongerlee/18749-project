@@ -3,9 +3,10 @@ import socket
 import sys
 import time
 from threading import Thread
+import os
 
 client_id = sys.argv[1]
-rm_IP = '128.237.119.74'
+rm_IP = os.environ.get('RMIP')
 rm_port = 10001
 server_port = 8080
 
