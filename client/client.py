@@ -27,38 +27,46 @@ def work():
         iteration += 1
         print("message sending to server :", inputData)
 
-        # request server one by one
-        response = ""
-
         # print("server list :", server_list)
 
-        for ip in server_list:
+        # for primary
+        response = ""
+        back_up_ips = server_list[1:]
+
+        while response == "":
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            primary_ip = server_list[0][0]
+            back_up_ips = server_list[1:]
+            try:
+                server_address = (primary_ip, server_port)
+                # print('connecting to server %s port %s' % server_address)
+                sock.connect(server_address)
+
+                sock.sendall(str.encode(inputData))
+                receiveData = sock.recv(1024).decode("utf-8")
+                response = receiveData
+                # print received server response
+                print(primary_ip, ",", time.ctime(), ",", response)
+                print('[response] : %s' % response)
+            except:
+                while server_list[0][0] == primary_ip:
+                    continue
+            finally:
+                sock.close()
+
+        # for backups
+        for ip in back_up_ips:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             try:
                 server_address = (ip[0], server_port)
                 # print('connecting to server %s port %s' % server_address)
                 sock.connect(server_address)
-
                 sock.sendall(str.encode(inputData))
 
-                receiveData = sock.recv(1024).decode("utf-8")
-
-                # print received server response
-                print(ip[0], ",", time.ctime(), ",", receiveData)
-
-                # if there is a response, update response
-                if receiveData != "not ready":
-                    response = receiveData
             except:
                 pass
             finally:
                 sock.close()
-
-        # print response one time
-        if response != "":
-            print('[response] : %s' % response)
-        else:
-            print('failed to get an response !')
 
 
 def connect_replicate_manager():
