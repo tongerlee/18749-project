@@ -29,6 +29,7 @@ class Server():
         self.checkpointReady = True
         self.thread_running = True
         self.isPrimary = False
+        self.ip_list = []
 
     def handle_client(self, host, port):
         print("start client thread")
@@ -132,7 +133,7 @@ class Server():
                 # parse received data
                 print("receive data from rm", data)
                 new_servers = json.loads(data)['ip_list']
-                print("new_servers: ",new_servers)
+                self.ip_list = new_servers
                 num_of_servers = json.loads(data)['num_member']
                 if new_servers[0][0] == self.IP:
                     self.isPrimary = True
@@ -184,7 +185,7 @@ class Server():
             connection, client_address = sock.accept()
             self.isReady = False
 
-            time_1, time_2 = self.preprocess_queue()
+            # time_1, time_2 = self.preprocess_queue()
 
             # Receive the data in small chunks and retransmit it
             # while True:

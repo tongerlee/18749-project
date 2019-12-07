@@ -32,7 +32,7 @@ def work():
 
         # print("server list :", server_list)
 
-        for ip in server_list:
+        for ip,index in enumerate(server_list, start=0):
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             try:
                 server_address = (ip[0], server_port)
@@ -40,15 +40,15 @@ def work():
                 sock.connect(server_address)
 
                 sock.sendall(str.encode(inputData))
+                if index == 0:
+                    receiveData = sock.recv(1024).decode("utf-8")
 
-                receiveData = sock.recv(1024).decode("utf-8")
+                    # print received server response
+                    print(ip[0], ",", time.ctime(), ",", receiveData)
 
-                # print received server response
-                print(ip[0], ",", time.ctime(), ",", receiveData)
-
-                # if there is a response, update response
-                if receiveData != "not ready":
-                    response = receiveData
+                    # if there is a response, update response
+                    if receiveData != "not ready":
+                        response = receiveData
             except:
                 pass
             finally:
