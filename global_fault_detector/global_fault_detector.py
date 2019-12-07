@@ -9,7 +9,7 @@ import tcp_client
 from threading import Thread
 
 iplist = []
-myhostname = "Jiatongs-MBP.wv.cc.cmu.edu"
+myhostname = "Jeremy-Ryu.wv.cc.cmu.edu"
 alive_message = "Server is alive."
 dead_message = "Server is dead."
 

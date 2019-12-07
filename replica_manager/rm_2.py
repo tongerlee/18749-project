@@ -70,7 +70,7 @@ def recvfrom(connection, client_address):
                         # sending new ip tuple list to all servers
                         new_server = list(set(ip_tuple) - set(membersIP))
                         for server_address in ip_tuple:
-                            Thread(target=send, args=(server_address, new_server)).start()
+                            Thread(target=send, args=(server_address, ip_tuple)).start()
 
                     membersIP = ip_tuple
                     numMembers = len(membersIP)
