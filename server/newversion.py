@@ -188,9 +188,14 @@ class Server():
 
             # Receive the data in small chunks and retransmit it
             # while True:
-            raw_data = connection.recv(4096)  # ???
-            current_timestamp = str(datetime.now())
-            data = json.loads(raw_data.decode("utf-8"))
+            try:
+                raw_data = connection.recv(4096)  # ???
+                current_timestamp = str(datetime.now())
+                data = json.loads(raw_data.decode("utf-8"))
+            except:
+                self.isReady = True
+                connection.close()
+                continue
             self.mc1 = int(data["mc_1"])
             self.mc2 = int(data["mc_2"])
             self.time1 = int(data["time1"])
