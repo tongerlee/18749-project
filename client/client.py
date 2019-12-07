@@ -16,7 +16,7 @@ def work():
     global server_list
     global server_port
     global client_id
-    print("********** Now you can input things *********** ")
+    print("********** client start working  *********** ")
     iteration = 0
     while True:
 
@@ -25,14 +25,17 @@ def work():
         # format of message to server : (client_id, inputData)
         inputData = client_id + "," + str(iteration) + ",1"
         iteration += 1
-        print("----- sending message: ", inputData, " -------")
+        print("----- sending message: ", str(iteration), " -------")
 
-        # print("server list :", server_list)
+        # wait until there is at least one server
+        while len(server_list) < 1:
+            continue
+        # print("current server list :", server_list)
 
-        # for primary
         response = "-1"
         back_up_ips = server_list[1:]
 
+        # for primary
         while response == "-1":
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             primary_ip = server_list[0][0]
@@ -43,16 +46,24 @@ def work():
                 sock.connect(primary_server_address)
                 sock.sendall(str.encode(inputData))
                 receiveData = sock.recv(1024).decode("utf-8")
+
+                if receiveData == "":
+                    print('primary %s failed :(' % primary_ip)
+                    while len(server_list) < 1 or server_list[0][0] == primary_ip:
+                        continue
+                    continue
+
                 response = receiveData
 
                 # print received server response
-                print(primary_ip, ",", time.ctime(), ", '", response, "'")
-                print('[response] : %s' % response)
+                print("received: '", response, "' from", primary_ip)
+                print('[response] : %s ' % response)
 
             except:
-                print('primary %s failed ...' % primary_ip)
-                while server_list[0][0] == primary_ip:
+                print('primary %s failed :(' % primary_ip)
+                while len(server_list) < 1 or server_list[0][0] == primary_ip:
                     continue
+
             finally:
                 sock.close()
 
@@ -66,7 +77,7 @@ def work():
                 sock.sendall(str.encode(inputData))
 
             except:
-                print('backup %s failed ...' % backup_ip[0])
+                print('backup %s failed :(' % backup_ip[0])
                 pass
             finally:
                 sock.close()
@@ -100,13 +111,14 @@ def connect_replicate_manager():
             data = json.loads(data)
             server_list = data
             # print new membership
-            print("--------- receiving membership from rm -------")
+            print("############ receiving membership from rm #############")
             for ip in server_list:
                 print('%s' % ip[0])
 
     finally:
         print('*********** closing socket **************')
         sock.close()
+
 
 
 Thread(target=connect_replicate_manager()).start()
