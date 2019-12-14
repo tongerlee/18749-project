@@ -11,12 +11,12 @@ server_ip_address = ('localhost', 8082)
 alive_message = "Server is alive."
 dead_message = "Server is dead."
 gfd_ip_address = (os.environ.get('GFDIP'), 8000)
-
+heartbeat_frequency = int(sys.argv[1])
 
 def heartbeat():
     while True:
         current_timestamp = str(datetime.now())
-        time.sleep(2)
+        time.sleep(heartbeat_frequency)
         try:
             tcp_client.send_to(server_ip_address, heartbeat_message, 1)  # wait 2 sec
         except:
