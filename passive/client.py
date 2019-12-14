@@ -89,35 +89,38 @@ def connect_replicate_manager():
     global rm_port
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = (rm_IP, rm_port)
-    print('connecting to rm %s ...' % rm_IP)
-    sock.connect(server_address)
-    try:
-
-        # on connection, receive membership from rm
-        data = sock.recv(1024)
-        data = json.loads(data)
-        server_list = data
-        # print membership
-        print("############ receiving membership from rm #############")
-        for ip in server_list:
-            print('%s' % ip[0])
-
-        # now can send request to servers
-        Thread(target=work).start()
-
-        # if membership changed, receive new membership from rm
-        while True:
+    while len(server_list) < 1:
+        try:
+            print('connecting to rm %s ...' % rm_IP)
+            sock.connect(server_address)
+            # on connection, receive membership from rm
             data = sock.recv(1024)
             data = json.loads(data)
             server_list = data
-            # print new membership
+            # print membership
             print("############ receiving membership from rm #############")
             for ip in server_list:
                 print('%s' % ip[0])
 
-    finally:
-        print('*********** closing socket **************')
-        sock.close()
+            # now can send request to servers
+            Thread(target=work).start()
+
+            # if membership changed, receive new membership from rm
+            while True:
+                data = sock.recv(1024)
+                data = json.loads(data)
+                server_list = data
+                # print new membership
+                print("############ receiving membership from rm #############")
+                for ip in server_list:
+                    print('%s' % ip[0])
+        except:
+        # except json.decoder.JSONDecodeError as e:
+            # print(e)
+            pass
+        finally:
+            print('*********** closing socket **************')
+            sock.close()
 
 
 Thread(target=connect_replicate_manager()).start()
