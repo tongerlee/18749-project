@@ -52,28 +52,28 @@ class Server():
                 cnt = (int)(parts[2])
                 if client_id == 1:
                     self.socket1 = client
-                    print("got message from client 1")
+                    print("Got message from client 1")
                 else:
                     self.socket2 = client
-                    print("got message from client 2")
+                    print("Got message from client 2")
 
                 print("Message put in queue")
                 # if self.isReady:
                 self.q.put((client_id, time, cnt))
                 self.checkpointReady = True
             except:
-                print("Dead during communicating with client")
+                # print("Dead during communicating with client")
                 self.checkpointReady = True
                 pass
 
-        print("Exception during processing data")
-        print("Is socket 1 exist?", self.socket1 is not None)
-        print("Is socket 2 exist?", self.socket2 is not None)
+        # print("Exception during processing data")
+        # print("Is socket 1 exist?", self.socket1 is not None)
+        # print("Is socket 2 exist?", self.socket2 is not None)
         if self.socket1 is not None:
-            print("Socket 1 exist, closing now")
+            # print("Socket 1 exist, closing now")
             self.socket1.close()
         if self.socket2 is not None:
-            print("Socket 2 exist, closing now")
+            # print("Socket 2 exist, closing now")
             self.socket1.close()
 
     def handle_lfd(self, host, port):
@@ -135,7 +135,7 @@ class Server():
                         while not self.checkpointReady:
                             continue
                         checkpoint = self.prepare_checkpoint()
-                        print("checkpoint is ", checkpoint)
+                        print("Checkpoint is ", checkpoint)
                         self.send_to_new_replica(checkpoint, new_ip, 8086)
                         self.lockReady.acquire()
                         self.isReady = True
@@ -193,7 +193,7 @@ class Server():
                             self.mc2 += 1
 
             self.isReady = True
-            print("After this checkpoint mc1= ", self.mc1, "mc2= ", self.mc2, "queue= ", self.q)
+            # print("After this checkpoint mc1= ", self.mc1, "mc2= ", self.mc2, "queue= ", self.q)
             print("Checkpoint received. I am ready")
             connection.close()
 
@@ -217,21 +217,21 @@ class Server():
         try:
             sock.connect((new_ip, port))
             time.sleep(5)
-            print("before send", str.encode(state))
+            # print("before send", str.encode(state))
             sock.sendall(str.encode(state))
         except socket.error as e:
             print("error is %d" % e)
             pass
 
-        print('State sent to new replica at %s port %s' % (new_ip, port))
+        # print('State sent to new replica at %s port %s' % (new_ip, port))
         sock.close()
 
     def prepare_checkpoint(self):
-        print("all items in : *************************", list(self.q.queue))
+        # print("all items in : *************************", list(self.q.queue))
         encode_variable = json.dumps({'mc_1': self.mc1, 'mc_2': self.mc2, 'time1': self.time1, 'time2': self.time2,
                                       'queue': list(self.q.queue)})
-        print(str.encode(encode_variable))
-        print(type(json.loads(str.encode(encode_variable).decode("utf-8"))))
+        # print(str.encode(encode_variable))
+        # print(type(json.loads(str.encode(encode_variable).decode("utf-8"))))
         return encode_variable
 
     def process_client_request(self):
@@ -248,7 +248,7 @@ class Server():
                             if data[1] > self.time1:
                                 self.time1 = data[1]
                                 self.mc1 += data[2]
-                                print("receive from client1, now seq num", self.mc1, self.time1)
+                                print('send--------------client1--------------', str(self.mc1))
                                 if self.socket1 is not None:
                                     self.socket1.sendall(str.encode(str(self.mc1)))
                                     self.socket1.close()
@@ -260,7 +260,7 @@ class Server():
                             if data[1] > self.time2:
                                 self.time2 = data[1]
                                 self.mc2 += data[2]
-                                print("receive from client2, now seq num", self.mc2, self.time2)
+                                print('send--------------client2--------------', str(self.mc2))
                                 if self.socket2 is not None:
                                     self.socket2.sendall(str.encode(str(self.mc2)))
                                     self.socket2.close()
@@ -272,14 +272,12 @@ class Server():
                 else:
                     self.lockReady.release()
         except:
-            print("Exception during processing data")
-            print("Is socket 1 exist?", self.socket1 is not None)
-            print("Is socket 2 exist?", self.socket2 is not None)
+            # print("Exception during processing data")
+            # print("Is socket 1 exist?", self.socket1 is not None)
+            # print("Is socket 2 exist?", self.socket2 is not None)
             if self.socket1 is not None:
-                print("Socket 1 exist, closing now")
                 self.socket1.close()
             if self.socket2 is not None:
-                print("Socket 2 exist, closing now")
                 self.socket2.close()
 
 
@@ -299,14 +297,9 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         server.thread_running = False
 
-        print("Exception during processing data")
-        print("Is socket 1 exist?", server.socket1 is not None)
-        print("Is socket 2 exist?", server.socket2 is not None)
         if server.socket1 is not None:
-            print("Socket 1 exist, closing now")
             server.socket1.close()
         if server.socket2 is not None:
-            print("Socket 2 exist, closing now")
             server.socket2.close()
         for eachThread in threads:
             eachThread.join()
