@@ -269,9 +269,11 @@ class Server():
                 # print("After this checkpoint client1 result = ", self.mc1, "client 2 result = ", self.mc2, "queue= ", self.q)
                 print("After this checkpoint client1 result = ", self.mc1, "client 2 result = ", self.mc2)
                 print("Checkpoint received. I am ready")
-                connection.close()
             except json.decoder.JSONDecodeError as e:
+                print(e)
                 pass
+            finally:
+                connection.close()
             
 
     def preprocess_queue(self):
