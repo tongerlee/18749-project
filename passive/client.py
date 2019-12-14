@@ -42,13 +42,13 @@ def work():
             back_up_ips = server_list[1:]
             try:
                 primary_server_address = (primary_ip, server_port)
-                print('connecting to [primary] %s' % primary_ip)
+                #print('connecting to [primary] %s' % primary_ip)
                 sock.connect(primary_server_address)
                 sock.sendall(str.encode(inputData))
                 receiveData = sock.recv(1024).decode("utf-8")
 
                 if receiveData == "":
-                    print('primary %s failed :(' % primary_ip)
+                    #print('primary %s failed :(' % primary_ip)
                     while len(server_list) < 1 or server_list[0][0] == primary_ip:
                         continue
                     continue
@@ -56,11 +56,11 @@ def work():
                 response = receiveData
 
                 # print received server response
-                print("received: '", response, "' from", primary_ip)
+               # print("received: '", response, "' from", primary_ip)
                 print('[response] : %s ' % response)
 
             except:
-                print('primary %s failed :(' % primary_ip)
+                #print('primary %s failed :(' % primary_ip)
                 while len(server_list) < 1 or server_list[0][0] == primary_ip:
                     continue
 
@@ -72,12 +72,12 @@ def work():
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             try:
                 backup_server_address = (backup_ip[0], server_port)
-                print('connecting to [backup] %s' % backup_ip[0])
+               # print('connecting to [backup] %s' % backup_ip[0])
                 sock.connect(backup_server_address)
                 sock.sendall(str.encode(inputData))
 
             except:
-                print('backup %s failed :(' % backup_ip[0])
+                #print('backup %s failed :(' % backup_ip[0])
                 pass
             finally:
                 sock.close()
@@ -91,7 +91,7 @@ def connect_replicate_manager():
     server_address = (rm_IP, rm_port)
     while len(server_list) < 1:
         try:
-            print('connecting to rm %s ...' % rm_IP)
+           # print('connecting to rm %s ...' % rm_IP)
             sock.connect(server_address)
             # on connection, receive membership from rm
             data = sock.recv(1024)
