@@ -114,8 +114,9 @@ def connect_replicate_manager():
                 print("############ receiving membership from rm #############")
                 for ip in server_list:
                     print('%s' % ip[0])
-        except json.decoder.JSONDecodeError as e:
-            print(e)
+        except:
+        # except json.decoder.JSONDecodeError as e:
+            # print(e)
             pass
         finally:
             print('*********** closing socket **************')
