@@ -5,11 +5,9 @@ import time
 from threading import Thread
 
 client_id = sys.argv[1]
-# rm_IP = '128.237.119.74'
 rm_IP = socket.gethostbyname(socket.gethostname())
 rm_port = 10001
 server_port = 8080
-
 server_list = []
 
 
@@ -31,9 +29,13 @@ def work():
         # request server one by one
         response = ""
 
-        # print("server list :", server_list)
+        # wait until there is at least one server
+        while True:
+            if len(server_list) > 0:
+                cur_server_list = server_list
+                break
 
-        for ip in server_list:
+        for ip in cur_server_list:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             try:
                 server_address = (ip[0], server_port)
