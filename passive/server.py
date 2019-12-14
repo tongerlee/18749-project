@@ -215,61 +215,66 @@ class Server():
 
             # Receive the data in small chunks and retransmit it
             # while True:
-
             self.ready = True
 
             raw_data = connection.recv(4096)  # ???
             current_timestamp = str(datetime.now())
-            data = json.loads(raw_data.decode("utf-8"))
-            checkpoint_mc1 = int(data["mc_1"])
-            checkpoint_mc2 = int(data["mc_2"])
-            checkpoint_time1 = int(data["time1"])
-            checkpoint_time2 = int(data["time2"])
-            flag1 = False
-            flag2 = False
-            temp_q = Queue()
-            while (not flag1 or not flag2) and (not self.q.empty()):
-                item = self.q.queue[0]
-                if int(item[0]) == 1:
-                    if int(item[1]) <= checkpoint_time1:
-                        self.q.get()
-                    else:
-                        flag1 = True
-                        self.q.get()
-                        temp_q.put(item)
+            try:
+                data = json.loads(raw_data.decode("utf-8"))
+                checkpoint_mc1 = int(data["mc_1"])
+                checkpoint_mc2 = int(data["mc_2"])
+                checkpoint_time1 = int(data["time1"])
+                checkpoint_time2 = int(data["time2"])
+                flag1 = False
+                flag2 = False
+                temp_q = Queue()
+                while (not flag1 or not flag2) and (not self.q.empty()):
+                    item = self.q.queue[0]
+                    if int(item[0]) == 1:
+                        if int(item[1]) <= checkpoint_time1:
+                            self.q.get()
+                        else:
+                            flag1 = True
+                            self.q.get()
+                            temp_q.put(item)
 
-                elif int(item[0]) == 2:
-                    if int(item[1]) <= checkpoint_time2:
-                        self.q.get()
-                    else:
-                        flag2 = True
-                        self.q.get()
-                        temp_q.put(item)
+                    elif int(item[0]) == 2:
+                        if int(item[1]) <= checkpoint_time2:
+                            self.q.get()
+                        else:
+                            flag2 = True
+                            self.q.get()
+                            temp_q.put(item)
 
-            self.mc1 = checkpoint_mc1
-            self.mc2 = checkpoint_mc2
+                self.mc1 = checkpoint_mc1
+                self.mc2 = checkpoint_mc2
 
-            temp_list = list(temp_q.queue) + list(self.q.queue)
-            self.q.queue = deque(temp_list)
+                temp_list = list(temp_q.queue) + list(self.q.queue)
+                self.q.queue = deque(temp_list)
 
-            # print("received_q is ==========================", received_q)
-            # if not queue_received and len(received_q) > 0:
-            #     print("Add the queue content")
-            #     queue_received = True
-            #     for item in received_q:
-            #         client_id = item[0]
-            #         curr_time = item[1]
-            #         if client_id == 1:
-            #             if time_1 is None or time_1 > curr_time:
-            #                 self.mc1 += 1
-            #         if client_id == 2:
-            #             if time_2 is None or time_2 > curr_time:
-            #                 self.mc2 += 1
+                # print("received_q is ==========================", received_q)
+                # if not queue_received and len(received_q) > 0:
+                #     print("Add the queue content")
+                #     queue_received = True
+                #     for item in received_q:
+                #         client_id = item[0]
+                #         curr_time = item[1]
+                #         if client_id == 1:
+                #             if time_1 is None or time_1 > curr_time:
+                #                 self.mc1 += 1
+                #         if client_id == 2:
+                #             if time_2 is None or time_2 > curr_time:
+                #                 self.mc2 += 1
 
-            # print("After this checkpoint client1 result = ", self.mc1, "client 2 result = ", self.mc2, "queue= ", self.q)
-            print("After this checkpoint client1 result = ", self.mc1, "client 2 result = ", self.mc2)
-            print("Checkpoint received. I am ready")
-            connection.close()
+                # print("After this checkpoint client1 result = ", self.mc1, "client 2 result = ", self.mc2, "queue= ", self.q)
+                print("After this checkpoint client1 result = ", self.mc1, "client 2 result = ", self.mc2)
+                print("Checkpoint received. I am ready")
+            except json.decoder.JSONDecodeError as e:
+                print(e)
+                pass
+            finally:
+                connection.close()
+            
 
     def preprocess_queue(self):
         cnt_1 = None
