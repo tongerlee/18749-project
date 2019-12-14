@@ -270,7 +270,7 @@ class Server():
                 print("After this checkpoint client1 result = ", self.mc1, "client 2 result = ", self.mc2)
                 print("Checkpoint received. I am ready")
             except json.decoder.JSONDecodeError as e:
-                print(e)
+                # print(e)
                 pass
             finally:
                 connection.close()
@@ -299,7 +299,7 @@ class Server():
             # print("before send", str.encode(state))
             sock.sendall(str.encode(state))
         except socket.error as e:
-            print("error is %s" % e)
+            # print("error is %s" % e)
             pass
         finally:
             # print('State sent to new replica at %s port %s' % (new_ip, port))
