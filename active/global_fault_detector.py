@@ -9,7 +9,8 @@ import tcp_client
 from threading import Thread
 
 iplist = []
-myhostname = "Jiatongs-MBP.wv.cc.cmu.edu"
+# myhostname = "Jiatongs-MBP.wv.cc.cmu.edu"
+myhostname = socket.gethostname()
 alive_message = "Server is alive."
 dead_message = "Server is dead."
 
@@ -82,4 +83,3 @@ def send():
 
 Thread(target=recv).start()
 Thread(target=send).start()
-

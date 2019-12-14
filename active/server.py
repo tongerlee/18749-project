@@ -7,6 +7,9 @@ from datetime import datetime
 from queue import Queue
 from collections import deque
 
+MYHOSTNAME = socket.gethostname()
+MYIP = socket.gethostbyname(MYHOSTNAME)
+
 
 class Server():
     def __init__(self):
@@ -126,7 +129,7 @@ class Server():
 
                     for new_server in new_servers:
                         new_ip = new_server[0]
-                        if new_ip == '128.237.211.163':
+                        if new_ip == MYIP:
                             continue
                         # prepare checkpoint
                         while not self.checkpointReady:
@@ -284,10 +287,10 @@ if __name__ == "__main__":
     server = Server()
     threads = []
     try:
-        threads.append(threading.Thread(target=server.handle_client, args=('Jiatongs-MBP.wv.cc.cmu.edu', 8080)))
+        threads.append(threading.Thread(target=server.handle_client, args=(MYHOSTNAME, 8080)))
         threads.append(threading.Thread(target=server.handle_lfd, args=('localhost', 8082)))
-        threads.append(threading.Thread(target=server.handle_rec_checkpoint, args=('Jiatongs-MBP.wv.cc.cmu.edu', 8086)))
-        threads.append(threading.Thread(target=server.handle_rm, args=('Jiatongs-MBP.wv.cc.cmu.edu', 8084)))
+        threads.append(threading.Thread(target=server.handle_rec_checkpoint, args=(MYHOSTNAME, 8086)))
+        threads.append(threading.Thread(target=server.handle_rm, args=(MYHOSTNAME, 8084)))
         threads.append(threading.Thread(target=server.process_client_request))
         for eachThread in threads:
             eachThread.start()

@@ -5,7 +5,7 @@ import time
 from threading import Thread
 
 client_id = sys.argv[1]
-rm_IP = '128.237.119.74'
+rm_IP = socket.gethostbyname(socket.gethostname())
 rm_port = 10001
 server_port = 8080
 
@@ -16,7 +16,7 @@ def work():
     global server_list
     global server_port
     global client_id
-    print("********** Now you can input things *********** ")
+    print("********** client start working  *********** ")
     iteration = 0
     while True:
 
@@ -25,45 +25,59 @@ def work():
         # format of message to server : (client_id, inputData)
         inputData = client_id + "," + str(iteration) + ",1"
         iteration += 1
-        print("message sending to server :", inputData)
+        print("----- sending message: ", str(iteration), " -------")
 
-        # print("server list :", server_list)
+        # wait until there is at least one server
+        while len(server_list) < 1:
+            continue
+        # print("current server list :", server_list)
 
-        # for primary
-        response = ""
+        response = "-1"
         back_up_ips = server_list[1:]
 
-        while response == "":
+        # for primary
+        while response == "-1":
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             primary_ip = server_list[0][0]
             back_up_ips = server_list[1:]
             try:
-                server_address = (primary_ip, server_port)
-                # print('connecting to server %s port %s' % server_address)
-                sock.connect(server_address)
-
+                primary_server_address = (primary_ip, server_port)
+                print('connecting to [primary] %s' % primary_ip)
+                sock.connect(primary_server_address)
                 sock.sendall(str.encode(inputData))
                 receiveData = sock.recv(1024).decode("utf-8")
-                response = receiveData
-                # print received server response
-                print(primary_ip, ",", time.ctime(), ",", response)
-                print('[response] : %s' % response)
-            except:
-                while server_list[0][0] == primary_ip:
+
+                if receiveData == "":
+                    print('primary %s failed :(' % primary_ip)
+                    while len(server_list) < 1 or server_list[0][0] == primary_ip:
+                        continue
                     continue
+
+                response = receiveData
+
+                # print received server response
+                print("received: '", response, "' from", primary_ip)
+                print('[response] : %s ' % response)
+
+            except:
+                print('primary %s failed :(' % primary_ip)
+                while len(server_list) < 1 or server_list[0][0] == primary_ip:
+                    continue
+
             finally:
                 sock.close()
 
         # for backups
-        for ip in back_up_ips:
+        for backup_ip in back_up_ips:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             try:
-                server_address = (ip[0], server_port)
-                # print('connecting to server %s port %s' % server_address)
-                sock.connect(server_address)
+                backup_server_address = (backup_ip[0], server_port)
+                print('connecting to [backup] %s' % backup_ip[0])
+                sock.connect(backup_server_address)
                 sock.sendall(str.encode(inputData))
 
             except:
+                print('backup %s failed :(' % backup_ip[0])
                 pass
             finally:
                 sock.close()
@@ -75,7 +89,7 @@ def connect_replicate_manager():
     global rm_port
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = (rm_IP, rm_port)
-    print('connecting to rm at %s port %s ...' % server_address)
+    print('connecting to rm %s ...' % rm_IP)
     sock.connect(server_address)
     try:
 
@@ -84,7 +98,7 @@ def connect_replicate_manager():
         data = json.loads(data)
         server_list = data
         # print membership
-        print("--------- receiving membership from rm -------")
+        print("############ receiving membership from rm #############")
         for ip in server_list:
             print('%s' % ip[0])
 
@@ -97,7 +111,7 @@ def connect_replicate_manager():
             data = json.loads(data)
             server_list = data
             # print new membership
-            print("--------- receiving membership from rm -------")
+            print("############ receiving membership from rm #############")
             for ip in server_list:
                 print('%s' % ip[0])
 
