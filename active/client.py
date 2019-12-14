@@ -15,7 +15,7 @@ def work():
     global server_list
     global server_port
     global client_id
-    print("********** Now you can input things *********** ")
+    print("********** Now client can start requesting *********** ")
     iteration = 0
     while True:
 
