@@ -4,12 +4,13 @@ import time
 from datetime import datetime
 from multiprocessing import Process
 import tcp_client
+import os
 
 heartbeat_message = "alive"
 server_ip_address = ('localhost', 8082)
 alive_message = "Server is alive."
 dead_message = "Server is dead."
-gfd_ip_address = ('128.237.209.58', 8000)
+gfd_ip_address = (os.environ.get('GFDIP'), 8000)
 
 
 def heartbeat():
